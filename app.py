@@ -91,6 +91,58 @@ def load_data():
 
 df = load_data()
 
+if 'started' not in st.session_state:
+    st.session_state['started'] = False
+
+if not st.session_state['started']:
+    import base64
+    with open("taxi_real_ai.png", "rb") as image_file:
+        img_b64 = base64.b64encode(image_file.read()).decode()
+
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    html_content = f"""
+<div style="width: 100%; padding: 10px;">
+<h1 style="margin-top: 0; color: #000000; font-size: 86px; font-weight: 800; letter-spacing: -2.5px; line-height: 1.1;">Uber Fare Data Explorer</h1>
+
+<p style="color: #222222; font-size: 30px; line-height: 1.5; margin-bottom: 40px; margin-top: 30px;">
+A deep-dive, interactive presentation designed for non-technical stakeholders to securely analyze historical <b>Uber ride metrics across New York City</b> (spanning from 2009 to 2015).
+</p>
+
+<img src="data:image/png;base64,{img_b64}" style="width: 100%; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); object-fit: cover; max-height: 600px; margin-bottom: 60px;">
+
+<hr style="border: 0; height: 1px; background-color: #E2E2E2; margin-bottom: 60px;">
+<h3 style="color: #000000; font-size: 24px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; font-weight: 700;">What are we analyzing?</h3>
+<p style="color: #333333; font-size: 26px; line-height: 1.6; margin-bottom: 60px;">
+The core dataset consists of roughly 10,000 highly curated trip records. The raw data was rigorously cleaned to filter out GPS tracking errors, zero-passenger trips, and negative logistical anomalies. The sanitized locations were then fed into an advanced machine-learning algorithm (K-Means Clustering) to autonomously discover hidden structural geographical "zones" where distinct pricing and rider behaviors occur.
+</p>
+<h3 style="color: #000000; font-size: 24px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; font-weight: 700;">How to use this dashboard</h3>
+<ul style="color: #333333; font-size: 26px; line-height: 1.6; padding-left: 25px; margin-bottom: 80px;">
+<li style="margin-bottom: 10px;"><b>Tabs:</b> Click through the navigation tabs to seamlessly explore completely different dimensions: Financials, Geospatial data, and Temporal trends.</li>
+<li style="margin-bottom: 10px;"><b>Interactive Filters:</b> Use the sliding filters on the absolute left sidebar to dynamically isolate specific hours of the day or vehicle class sizes.</li>
+<li style="margin-bottom: 10px;"><b>Insight Cards:</b> Every single visualization is accompanied by a dedicated "Insight" panel on the right, instantly translating the raw mathematical data into plain English.</li>
+</ul>
+</div>
+    """
+    st.markdown(html_content, unsafe_allow_html=True)
+    
+    col_s1, col_s2, col_s3 = st.columns([1, 2, 1])
+    with col_s2:
+        if st.button("Explore the Dashboard", type="primary", use_container_width=True):
+            st.session_state['started'] = True
+            st.rerun()
+            
+    st.stop()
+
+
+st.markdown("""
+<div style="display: flex; justify-content: flex-end; margin-bottom: -15px;">
+""", unsafe_allow_html=True)
+if st.button("← Back to Splash Page", type="secondary"):
+    st.session_state['started'] = False
+    st.rerun()
+st.markdown("</div>", unsafe_allow_html=True)
+
+
 # Sidebar filters
 st.sidebar.header("Filters")
 hour = st.sidebar.slider("Pickup hour", 0, 23, 12)
@@ -136,13 +188,13 @@ with tab1:
     
     col1, col2 = st.columns([2, 1])
     with col1:
-        fig_hist = px.histogram(filtered, x="fare_amount", nbins=30, title="Fare Distribution")
+        fig_hist = px.histogram(filtered, x="fare_amount", nbins=30, title="Fare Distribution", color_discrete_sequence=["#06C167"])
         st.plotly_chart(fig_hist, width="stretch")
     with col2:
         st.markdown("<br><br><br>", unsafe_allow_html=True)
         st.markdown("""
         <div style="background-color: #F6F6F6; border-left: 4px solid #000000; padding: 20px; border-radius: 4px;">
-            <h4 style="margin-top: 0; color: #000000;">💡 Key Insight</h4>
+            <h4 style="margin-top: 0; color: #000000; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Fare Distribution Volume</h4>
             <p style="color: #333333; font-size: 15px; line-height: 1.5; margin-bottom: 0;">Most rides are overwhelmingly short-distance trips under $20, with a steep drop-off for expensive fares. This clearly indicates the primary platform use-case is quick inner-city commuting rather than long rural hauls.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -151,13 +203,13 @@ with tab1:
 
     col3, col4 = st.columns([2, 1])
     with col3:
-        fig_scatter = px.scatter(filtered, x="distance_km", y="fare_amount", opacity=0.5, title="Fare vs. Distance")
+        fig_scatter = px.scatter(filtered, x="distance_km", y="fare_amount", opacity=0.5, title="Fare vs. Distance", color_discrete_sequence=["#06C167"])
         st.plotly_chart(fig_scatter, width="stretch")
     with col4:
         st.markdown("<br><br><br>", unsafe_allow_html=True)
         st.markdown("""
         <div style="background-color: #F6F6F6; border-left: 4px solid #000000; padding: 20px; border-radius: 4px;">
-            <h4 style="margin-top: 0; color: #000000;">💡 Key Insight</h4>
+            <h4 style="margin-top: 0; color: #000000; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Distance vs. Pricing Anomalies</h4>
             <p style="color: #333333; font-size: 15px; line-height: 1.5; margin-bottom: 0;">While there is a clear linear relationship between distance and fare, striking vertical pricing anomalies exist at 0km. These represent edge-cases like flat-rate tolls, severe gridlocks, or GPS cutouts.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -168,13 +220,13 @@ with tab1:
     with col5:
         pass_counts = filtered["passenger_count"].value_counts().reset_index()
         pass_counts.columns = ["Passenger Count", "Trips"]
-        fig_bar = px.bar(pass_counts, x="Passenger Count", y="Trips", title="Trips by Passenger Count")
+        fig_bar = px.bar(pass_counts, x="Passenger Count", y="Trips", title="Trips by Passenger Count", color_discrete_sequence=["#06C167"])
         st.plotly_chart(fig_bar, width="stretch")
     with col6:
         st.markdown("<br><br><br>", unsafe_allow_html=True)
         st.markdown("""
         <div style="background-color: #F6F6F6; border-left: 4px solid #000000; padding: 20px; border-radius: 4px;">
-            <h4 style="margin-top: 0; color: #000000;">💡 Key Insight</h4>
+            <h4 style="margin-top: 0; color: #000000; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Core Passenger Demographics</h4>
             <p style="color: #333333; font-size: 15px; line-height: 1.5; margin-bottom: 0;">Single-passenger trips completely dominate the dataset by raw volume, highlighting that solo point-to-point transportation is the absolute core lifeblood of the platform's revenue.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -183,13 +235,13 @@ with tab1:
     
     col7, col8 = st.columns([2, 1])
     with col7:
-        fig_box = px.box(filtered, x='passenger_count', y='fare_amount', title='Fare Distribution by Passenger Count')
+        fig_box = px.box(filtered, x='passenger_count', y='fare_amount', title='Fare Distribution by Passenger Count', color_discrete_sequence=["#06C167"])
         st.plotly_chart(fig_box, width="stretch")
     with col8:
         st.markdown("<br><br><br>", unsafe_allow_html=True)
         st.markdown("""
         <div style="background-color: #F6F6F6; border-left: 4px solid #000000; padding: 20px; border-radius: 4px;">
-            <h4 style="margin-top: 0; color: #000000;">💡 Key Insight</h4>
+            <h4 style="margin-top: 0; color: #000000; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Fare Scaling by Capacity</h4>
             <p style="color: #333333; font-size: 15px; line-height: 1.5; margin-bottom: 0;">Surprisingly, the median fare does not drastically increase for larger passenger counts, implying larger vehicles are fundamentally booked for identical trip lengths as solo sedans.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -219,10 +271,11 @@ with tab2:
             
         col_c1, col_c2 = st.columns([2, 1])
         with col_c1:
+            uber_palette = ["#06C167", "#000000", "#333333", "#666666", "#999999", "#CCCCCC", "#1f7a46", "#048043"]
             fig_cluster = px.scatter(
                 map_df, x='pickup_longitude', y='pickup_latitude', color='cluster',
                 title='Pickup locations colored by cluster', hover_data=['fare_amount', 'distance_km'],
-                height=500
+                height=500, color_discrete_sequence=uber_palette
             )
             fig_cluster.update_layout(margin=dict(l=0, r=0, t=40, b=0))
             st.plotly_chart(fig_cluster, width="stretch")
@@ -230,7 +283,7 @@ with tab2:
             st.markdown("<br><br><br><br>", unsafe_allow_html=True)
             st.markdown("""
             <div style="background-color: #F6F6F6; border-left: 4px solid #000000; padding: 20px; border-radius: 4px;">
-                <h4 style="margin-top: 0; color: #000000;">💡 Key Insight</h4>
+                <h4 style="margin-top: 0; color: #000000; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Geographical Cluster Zonation</h4>
                 <p style="color: #333333; font-size: 15px; line-height: 1.5; margin-bottom: 0;">The K-Means algorithm effectively carves harsh geographical segmentations purely based on pricing and time parameters. We can visibly see distinct "zones" corresponding to localized rider behaviors.</p>
             </div>
             """, unsafe_allow_html=True)
@@ -239,11 +292,12 @@ with tab2:
             
         col_m1, col_m2 = st.columns([2, 1])
         with col_m1:
+            uber_palette = ["#06C167", "#000000", "#333333", "#666666", "#999999", "#CCCCCC", "#1f7a46", "#048043"]
             fig_map = px.scatter_mapbox(
                 map_df, lat='pickup_latitude', lon='pickup_longitude', color='cluster',
                 size='fare_amount', hover_data=['fare_amount', 'distance_km'], zoom=10,
                 title='Pickup Location Density Map', mapbox_style="open-street-map",
-                height=500
+                height=500, color_discrete_sequence=uber_palette
             )
             fig_map.update_layout(margin=dict(l=0, r=0, t=40, b=0))
             st.plotly_chart(fig_map, width="stretch")
@@ -251,7 +305,7 @@ with tab2:
             st.markdown("<br><br><br><br>", unsafe_allow_html=True)
             st.markdown("""
             <div style="background-color: #F6F6F6; border-left: 4px solid #000000; padding: 20px; border-radius: 4px;">
-                <h4 style="margin-top: 0; color: #000000;">💡 Key Insight</h4>
+                <h4 style="margin-top: 0; color: #000000; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Ride Volume Heatmap</h4>
                 <p style="color: #333333; font-size: 15px; line-height: 1.5; margin-bottom: 0;">This heatmap vividly underscores a massive structural volume concentration deeply centered around the business district hubs, which rapidly dissipates into nothingness moving toward the peripheral outer limits.</p>
             </div>
             """, unsafe_allow_html=True)
@@ -269,13 +323,13 @@ with tab3:
         # Trips per hour
         hour_counts = filtered['pickup_datetime'].dt.hour.value_counts().reset_index()
         hour_counts.columns = ["Hour of Day", "Number of Trips"]
-        fig_hour = px.bar(hour_counts, x="Hour of Day", y="Number of Trips", title="Trips per Hour")
+        fig_hour = px.bar(hour_counts, x="Hour of Day", y="Number of Trips", title="Trips per Hour", color_discrete_sequence=["#06C167"])
         st.plotly_chart(fig_hour, width="stretch")
     with col_t2:
         st.markdown("<br><br><br>", unsafe_allow_html=True)
         st.markdown("""
         <div style="background-color: #F6F6F6; border-left: 4px solid #000000; padding: 20px; border-radius: 4px;">
-            <h4 style="margin-top: 0; color: #000000;">💡 Key Insight</h4>
+            <h4 style="margin-top: 0; color: #000000; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Temporal Demand Curve</h4>
             <p style="color: #333333; font-size: 15px; line-height: 1.5; margin-bottom: 0;">The raw temporal throughput reveals a starkly bimodal demand curve. Volumes begin softly surging into the morning commute, steadily climb, and massively erupt into a dominant peak during the evening rush hour exits.</p>
         </div>
         """, unsafe_allow_html=True)
