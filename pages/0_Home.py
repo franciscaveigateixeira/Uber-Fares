@@ -20,18 +20,6 @@ html_content = f"""
 <div style="width: 100%; padding: 10px;">
 <h1 style="margin-top: 0; color: #000000; font-size: 86px; font-weight: 800; letter-spacing: -2.5px; line-height: 1.1;">Uber Fare Data Explorer</h1>
 
-<div style="display: flex; gap: 40px; margin-top: 20px; margin-bottom: 30px;">
-    <div>
-        <p style="color: #666666; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px;">Work Done By</p>
-        <p style="color: #000000; font-size: 18px; line-height: 1.4; margin: 0;"><b>Carlota Marto</b> (20241729)<br><b>Francisca Teixeira</b> (20241702)</p>
-    </div>
-    <div style="width: 2px; background-color: #E2E2E2;"></div>
-    <div>
-        <p style="color: #666666; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px;">Teacher</p>
-        <p style="color: #000000; font-size: 18px; line-height: 1.4; margin: 0;"><b>Ivo Bernardo</b><br><span style="color: #444444; font-size: 15px;">Machine Learning II</span></p>
-    </div>
-</div>
-
 <p style="color: #222222; font-size: 30px; line-height: 1.5; margin-bottom: 40px;">
 A deep-dive, interactive presentation designed for non-technical stakeholders to securely analyze historical <b>Uber ride metrics across New York City</b> (spanning from 2009 to 2015).
 </p>
@@ -44,7 +32,6 @@ A deep-dive, interactive presentation designed for non-technical stakeholders to
 """
 st.markdown(html_content, unsafe_allow_html=True)
 
-# Custom KPI HTML rendering
 kpi_html = f"""
     <div style="display: flex; justify-content: space-between; gap: 20px; margin-bottom: 1.5rem; padding: 0 10px;">
         <div style="flex: 1; background-color: #000000; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
