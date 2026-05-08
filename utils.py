@@ -30,6 +30,23 @@ def get_base64_bin_help(bin_file):
     return base64.b64encode(data).decode()
 
 def inject_custom_css():
+    user_type = st.session_state.get('user_type', '')
+    role_param = ""
+    if user_type == "Uber User":
+        role_param = "?role=user"
+    elif user_type == "Uber Owner":
+        role_param = "?role=owner"
+
+    if user_type == "Uber User":
+        nav_links = f'<a href="geospatial-hub{role_param}" target="_self" class="nav-link">Maps</a><a href="temporal-analysis{role_param}" target="_self" class="nav-link">Time</a><a href="distributions{role_param}" target="_self" class="nav-link">Prices</a><a href="segment-encyclopedia{role_param}" target="_self" class="nav-link">Profiles</a>'
+        right_button = ""
+    elif user_type == "Uber Owner":
+        nav_links = f'<a href="advanced-analysis{role_param}" target="_self" class="nav-link">Advanced</a><a href="business-strategy{role_param}" target="_self" class="nav-link">Strategy</a>'
+        right_button = f"""<a href="ride-simulator{role_param}" target="_self" class="btn-simulator">Ride Simulator</a>"""
+    else:
+        nav_links = ""
+        right_button = ""
+
     st.markdown(
         f"""
         <style>
@@ -166,23 +183,18 @@ def inject_custom_css():
         }}
         </style>
         
-        <div class="uber-navbar" style="justify-content: space-between;">
-            <div style="display: flex; align-items: center;">
-                <a href="/" target="_top" class="uber-logo-text" style="margin-right: 30px; text-decoration: none; color: #FFFFFF !important;">Uber</a>
-                <div style="border-left: 1px solid #333; padding-left: 20px; display: flex; align-items: center;">
-                    <a href="geospatial-hub" target="_top" class="nav-link">Maps</a>
-                    <a href="temporal-analysis" target="_top" class="nav-link">Time</a>
-                    <a href="distributions" target="_top" class="nav-link">Prices</a>
-                    <a href="advanced-analysis" target="_top" class="nav-link">Advanced</a>
-                    <a href="segment-encyclopedia" target="_top" class="nav-link">Profiles</a>
-                    <a href="business-strategy" target="_top" class="nav-link">Strategy</a>
-                </div>
-            </div>
-            <div>
-                <a href="ride-simulator" target="_top" class="btn-simulator">Ride Simulator</a>
-            </div>
-        </div>
-        """,
+<div class="uber-navbar" style="justify-content: space-between;">
+<div style="display: flex; align-items: center;">
+<a href="/" target="_self" class="uber-logo-text" style="margin-right: 30px; text-decoration: none; color: #FFFFFF !important;">Uber</a>
+<div style="border-left: 1px solid #333; padding-left: 20px; display: flex; align-items: center;">
+{nav_links}
+</div>
+</div>
+<div>
+{right_button}
+</div>
+</div>
+""",
         unsafe_allow_html=True,
     )
     

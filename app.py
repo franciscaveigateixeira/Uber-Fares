@@ -9,6 +9,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+if 'role' in st.query_params:
+    if st.query_params['role'] == 'user':
+        st.session_state['user_type'] = 'Uber User'
+    elif st.query_params['role'] == 'owner':
+        st.session_state['user_type'] = 'Uber Owner'
+
 # Inject the global CSS and Top Navbar onto every page
 inject_custom_css()
 
@@ -22,11 +28,11 @@ if 'user_type' not in st.session_state:
     with user_cols[0]:
         st.markdown(
             """
-            <div style='border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; background: #ffffff; box-shadow: 0 30px 80px rgba(15, 23, 42, 0.06);'>
-                <p style='font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #0ea5e9; margin-bottom: 16px;'>Uber User</p>
-                <h2 style='margin: 0 0 16px; font-size: 28px; line-height: 1.1;'>Ride smarter</h2>
-                <p style='color: #475569; font-size: 16px; line-height: 1.75;'>Discover fare trends, busiest times and neighborhood cost signals to plan better trips and save money.</p>
-            </div>
+<div style='border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; background: #ffffff; box-shadow: 0 30px 80px rgba(15, 23, 42, 0.06);'>
+<p style='font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #0ea5e9; margin-bottom: 16px;'>Uber User</p>
+<h2 style='margin: 0 0 16px; font-size: 28px; line-height: 1.1;'>Ride smarter</h2>
+<p style='color: #475569; font-size: 16px; line-height: 1.75;'>Discover fare trends, busiest times and neighborhood cost signals to plan better trips and save money.</p>
+</div>
             """,
             unsafe_allow_html=True,
         )
@@ -35,13 +41,22 @@ if 'user_type' not in st.session_state:
             st.rerun()
 
     with user_cols[1]:
+        from utils import get_base64_bin_help
+        
+        # Replace 'taxi_real_ai.png' with the exact filename of your image if it's different
+        bg_image_b64 = get_base64_bin_help("taxi_real_ai.png")
+        if bg_image_b64:
+            bg_style = f"background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.9)), url('data:image/png;base64,{bg_image_b64}'); background-size: cover; background-position: right center;"
+        else:
+            bg_style = "background: #ffffff;"
+
         st.markdown(
-            """
-            <div style='border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; background: #ffffff; box-shadow: 0 30px 80px rgba(15, 23, 42, 0.06);'>
-                <p style='font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #0ea5e9; margin-bottom: 16px;'>Uber Owner</p>
-                <h2 style='margin: 0 0 16px; font-size: 28px; line-height: 1.1;'>Manage operations</h2>
-                <p style='color: #475569; font-size: 16px; line-height: 1.75;'>Access business-level insights for cost savings, operational efficiency and pricing optimization.</p>
-            </div>
+            f"""
+<div style='border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; {bg_style} box-shadow: 0 30px 80px rgba(15, 23, 42, 0.06);'>
+<p style='font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #0ea5e9; margin-bottom: 16px;'>Uber Owner</p>
+<h2 style='margin: 0 0 16px; font-size: 28px; line-height: 1.1;'>Manage operations</h2>
+<p style='color: #475569; font-size: 16px; line-height: 1.75;'>Access business-level insights for cost savings, operational efficiency and pricing optimization.</p>
+</div>
             """,
             unsafe_allow_html=True,
         )
