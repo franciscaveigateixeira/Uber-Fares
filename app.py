@@ -21,48 +21,70 @@ inject_custom_css()
 if 'user_type' not in st.session_state:
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     st.markdown("<h1 style='text-align: center; color: #000000;'>Welcome to Uber Fare Explorer</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-size: 18px; color: #666666; max-width: 720px; margin: 0 auto;'>Choose the experience that matches your role and get started with focused insights tailored for riders or owners.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 24px; color: #666666; max-width: 720px; margin: 0 auto;'>Choose the experience that matches your role and get started with focused insights tailored for user or owner.</p>", unsafe_allow_html=True)
     st.markdown("<br><br>", unsafe_allow_html=True)
 
     user_cols = st.columns(2, gap='large')
     with user_cols[0]:
+        from utils import get_base64_bin_help
+        import os
+        
+        user_bg_b64 = ""
+        user_mime = "png"
+        for ext in ["webp", "jpg", "png", "jpeg"]:
+            if os.path.exists(f"uber_users_image.{ext}"):
+                user_bg_b64 = get_base64_bin_help(f"uber_users_image.{ext}")
+                user_mime = ext if ext != "jpg" else "jpeg"
+                break
+
+        if user_bg_b64:
+            user_bg_style = f"background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3)), url('data:image/{user_mime};base64,{user_bg_b64}'); background-size: cover; background-position: center;"
+        else:
+            user_bg_style = "background: #ffffff;"
+
         st.markdown(
-            """
-<div style='border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; background: #ffffff; box-shadow: 0 30px 80px rgba(15, 23, 42, 0.06);'>
-<p style='font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #0ea5e9; margin-bottom: 16px;'>Uber User</p>
-<h2 style='margin: 0 0 16px; font-size: 28px; line-height: 1.1;'>Ride smarter</h2>
-<p style='color: #475569; font-size: 16px; line-height: 1.75;'>Discover fare trends, busiest times and neighborhood cost signals to plan better trips and save money.</p>
+            f"""
+<div style="border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; {user_bg_style} box-shadow: 0 30px 80px rgba(15, 23, 42, 0.06); transition: transform 0.3s ease;">
+  <div style="background: rgba(255, 255, 255, 0.75); padding: 24px; border-radius: 16px; backdrop-filter: blur(8px); box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <p style='font-size: 16px; letter-spacing: 0.2em; text-transform: uppercase; color: #0ea5e9; margin-bottom: 16px; font-weight: 800;'>Uber User</p>
+    <h2 style='margin: 0 0 16px; font-size: 28px; line-height: 1.1; color: #000000;'>Ride smarter</h2>
+    <p style='color: #334155; font-size: 16px; line-height: 1.75; margin-bottom: 24px;'>Discover fare trends, busiest times and neighborhood cost signals to plan better trips and save money.</p>
+    <a href="?role=user" target="_self" style="display: block; width: 100%; text-align: center; background: #000000; color: #ffffff; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 1px solid #000000; font-family: sans-serif;">Enter as User</a>
+  </div>
 </div>
             """,
             unsafe_allow_html=True,
         )
-        if st.button("Enter as User", use_container_width=True, key='user_button'):
-            st.session_state['user_type'] = 'Uber User'
-            st.rerun()
 
     with user_cols[1]:
         from utils import get_base64_bin_help
         
-        # Replace 'taxi_real_ai.png' with the exact filename of your image if it's different
-        bg_image_b64 = get_base64_bin_help("taxi_real_ai.png")
+        bg_image_b64 = ""
+        owner_mime = "png"
+        for ext in ["jpg", "png", "jpeg", "webp"]:
+            if os.path.exists(f"dashboard_bg.{ext}"):
+                bg_image_b64 = get_base64_bin_help(f"dashboard_bg.{ext}")
+                owner_mime = ext if ext != "jpg" else "jpeg"
+                break
+
         if bg_image_b64:
-            bg_style = f"background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.9)), url('data:image/png;base64,{bg_image_b64}'); background-size: cover; background-position: right center;"
+            bg_style = f"background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3)), url('data:image/{owner_mime};base64,{bg_image_b64}'); background-size: cover; background-position: center;"
         else:
             bg_style = "background: #ffffff;"
 
         st.markdown(
             f"""
-<div style='border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; {bg_style} box-shadow: 0 30px 80px rgba(15, 23, 42, 0.06);'>
-<p style='font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #0ea5e9; margin-bottom: 16px;'>Uber Owner</p>
-<h2 style='margin: 0 0 16px; font-size: 28px; line-height: 1.1;'>Manage operations</h2>
-<p style='color: #475569; font-size: 16px; line-height: 1.75;'>Access business-level insights for cost savings, operational efficiency and pricing optimization.</p>
+<div style="border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; {bg_style} box-shadow: 0 30px 80px rgba(15, 23, 42, 0.06); transition: transform 0.3s ease;">
+  <div style="background: rgba(255, 255, 255, 0.75); padding: 24px; border-radius: 16px; backdrop-filter: blur(8px); box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <p style='font-size: 16px; letter-spacing: 0.2em; text-transform: uppercase; color: #0ea5e9; margin-bottom: 16px; font-weight: 800;'>Uber Owner</p>
+    <h2 style='margin: 0 0 16px; font-size: 28px; line-height: 1.1; color: #000000;'>Manage operations</h2>
+    <p style='color: #334155; font-size: 16px; line-height: 1.75; margin-bottom: 24px;'>Access business-level insights for cost savings, operational efficiency and pricing optimization.</p>
+    <a href="?role=owner" target="_self" style="display: block; width: 100%; text-align: center; background: #000000; color: #ffffff; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 1px solid #000000; font-family: sans-serif;">Enter as Owner</a>
+  </div>
 </div>
             """,
             unsafe_allow_html=True,
         )
-        if st.button("Enter as Owner", use_container_width=True, key='owner_button'):
-            st.session_state['user_type'] = 'Uber Owner'
-            st.rerun()
 
     st.stop()
 

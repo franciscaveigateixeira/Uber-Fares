@@ -12,15 +12,21 @@ st.set_page_config(
 inject_custom_css()
 df = load_data()
 
-with open("splash_image.jpg", "rb") as image_file:
-    img_b64 = base64.b64encode(image_file.read()).decode()
+import os
+image_paths = ["uber first page.avif", "uber first page.jpg", "uber first page.png", "uber_first_page.jpg", "uber_first_page.png", "splash_image.jpg"]
+img_b64 = ""
+for img_path in image_paths:
+    if os.path.exists(img_path):
+        with open(img_path, "rb") as image_file:
+            img_b64 = base64.b64encode(image_file.read()).decode()
+        break
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 html_content = f"""
 <div style="width: 100%; padding: 10px;">
 <h1 style="margin-top: 0; color: #000000; font-size: 86px; font-weight: 800; letter-spacing: -2.5px; line-height: 1.1;">Uber Fare Data Explorer</h1>
 
-<p style="color: #222222; font-size: 30px; line-height: 1.5; margin-bottom: 40px;">
+<p style="color: #222222; font-size: 22px; line-height: 1.5; margin-bottom: 40px;">
 A deep-dive, interactive presentation designed for non-technical stakeholders to securely analyze historical <b>Uber ride metrics across New York City</b> (spanning from 2009 to 2015).
 </p>
 

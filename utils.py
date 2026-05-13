@@ -47,9 +47,23 @@ def inject_custom_css():
         nav_links = ""
         right_button = ""
 
+    # Global Map Background
+    bg_b64 = get_base64_bin_help("map_with_black_car_midright.png")
+    bg_css = ""
+    if bg_b64:
+        bg_css = f"""
+        .stApp {{
+            background-image: linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.70)), url('data:image/png;base64,{bg_b64}');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }}
+        """
+
     st.markdown(
         f"""
         <style>
+        {bg_css}
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
         /* Hide sidebar entirely */
@@ -182,10 +196,17 @@ def inject_custom_css():
             border-radius: 1px;
         }}
         </style>
-        
+        """, unsafe_allow_html=True)
+    logo_b64 = get_base64_bin_help("uber_logo.jpg")
+    if not logo_b64:
+        logo_b64 = get_base64_bin_help("uber_logo.png")
+    
+    logo_html = f"<img src='data:image/jpeg;base64,{logo_b64}' style='height: 24px; margin-right: 8px; border-radius: 4px;'/>" if logo_b64 else ""
+
+    st.markdown(f"""
 <div class="uber-navbar" style="justify-content: space-between;">
 <div style="display: flex; align-items: center;">
-<a href="/" target="_self" class="uber-logo-text" style="margin-right: 30px; text-decoration: none; color: #FFFFFF !important;">Uber</a>
+<a href="/" target="_self" class="uber-logo-text" style="margin-right: 30px; text-decoration: none; color: #FFFFFF !important; display: flex; align-items: center;">{logo_html}Uber</a>
 <div style="border-left: 1px solid #333; padding-left: 20px; display: flex; align-items: center;">
 {nav_links}
 </div>
@@ -227,7 +248,7 @@ def render_footer():
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('''
     <div style="background-color: #000000; padding: 20px; border-radius: 4px; display: flex; justify-content: space-between; color: #666666; font-size: 12px; font-family: \'Inter\', sans-serif;">
-        <div>© 2024 Uber Fare Explorer Project - Academic Use Only</div>
+        <div>© 2026 Uber Fare Explorer Project - Academic Use Only</div>
         <div>Built for Machine Learning II</div>
     </div>
     ''', unsafe_allow_html=True)
