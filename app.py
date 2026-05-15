@@ -4,7 +4,7 @@ from utils import inject_custom_css
 # This must be the very first Streamlit command
 st.set_page_config(
     page_title="Uber Fare Explorer",
-    page_icon="uber_logo.png",
+    page_icon="uber_logo.jpg",
     layout="wide",
     initial_sidebar_state="collapsed",
 )

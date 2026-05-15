@@ -155,7 +155,7 @@ if st.button("See prices"):
             st.caption(surge_msg)
             
             # Render Fare Cards
-            logo_b64 = get_base64_bin_help('uber_logo.png')
+            logo_b64 = get_base64_bin_help('uber_logo.jpg')
             logo_img_tag = f'<img src="data:image/png;base64,{logo_b64}" style="height: 18px;"/>' if logo_b64 else 'UberX'
             st.markdown(f"""
             <div class="fare-card" style="border-left: 6px solid #06C167;">

@@ -3,7 +3,7 @@ from utils import inject_custom_css, render_footer
 
 st.set_page_config(
     page_title="Passenger Savings & Hacks",
-    page_icon="uber_logo.png",
+    page_icon="uber_logo.jpg",
     layout="wide",
     initial_sidebar_state="expanded",
 )

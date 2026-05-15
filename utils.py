@@ -264,7 +264,7 @@ def render_footer():
         st.markdown("**Ivo Bernardo**<br>Machine Learning II", unsafe_allow_html=True)
         
     with f_col4:
-        st.image("uber_logo.png", width=120)
+        st.image("uber_logo.jpg", width=120)
         st.caption("This project is optimized for executive-level business intelligence and strategic decision making.")
         
     st.markdown("<br>", unsafe_allow_html=True)
