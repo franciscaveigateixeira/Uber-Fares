@@ -97,6 +97,6 @@ if 'cluster' in df.columns:
         st.plotly_chart(fig3, use_container_width=True)
 
 else:
-    st.info("Cluster data is required to view these insights. Please ensure you are loading 'uber_with_clusters.csv'.", icon=" ")
+    st.info("Cluster data is required to view these insights. Please ensure you are loading 'uber_with_clusters.csv'.")
 
 render_footer()

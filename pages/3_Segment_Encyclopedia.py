@@ -49,7 +49,7 @@ if 'cluster' in df.columns:
 </div>
 """, unsafe_allow_html=True)
 else:
-    st.info("Cluster data missing.", icon=" ")
+    st.info("Cluster data missing.")
 
 from utils import render_footer
 render_footer()
