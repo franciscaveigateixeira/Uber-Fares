@@ -11,48 +11,87 @@ st.set_page_config(
 
 @st.dialog("User Authentication")
 def auth_modal(mode="login"):
+    role = st.query_params.get('role', '')
+    role_qs = f"?role={role}&" if role else "?"
     if mode == "login":
         st.markdown("<h2 style='text-align: center; color: #333333; font-family: sans-serif; margin-bottom: 20px; font-weight: 700;'>Login</h2>", unsafe_allow_html=True)
-        st.text_input("Email", placeholder="name@company.com", key="email_login")
-        st.text_input("Password", type="password", placeholder="••••••••", key="pass_login")
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("SIGN IN", type="primary", use_container_width=True):
-            st.session_state['logged_in_user'] = "Jane Doe"
-            if 'action' in st.query_params:
-                del st.query_params['action']
-            st.success("Successfully signed in! Select your dashboard role below.")
-            st.rerun()
+        with st.form("login_form", border=False):
+            st.text_input("First Name", placeholder="Jane", key="fn_login")
+            st.text_input("Last Name", placeholder="Doe", key="ln_login")
+            st.text_input("Email", placeholder="name@company.com", key="email_login")
+            st.text_input("Password", type="password", placeholder="••••••••", key="pass_login")
+            st.markdown("<br>", unsafe_allow_html=True)
+            submitted = st.form_submit_button("SIGN IN", type="primary", use_container_width=True)
+            if submitted:
+                email = st.session_state.get('email_login', 'user@example.com')
+                fn = st.session_state.get('fn_login', 'Jane')
+                ln = st.session_state.get('ln_login', 'Doe')
+                full = f"{fn} {ln}".strip()
+                st.session_state['logged_in_user'] = full if full else "Jane Doe"
+                st.session_state['user_email'] = email
+                st.session_state['auth_success'] = True
+                st.session_state['just_authenticated'] = True
+                if 'action' in st.query_params:
+                    del st.query_params['action']
+                st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; color: #666; font-size: 14px;'>Forgot your password?</p>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: #666; font-size: 14px;'>Don't have an account? <a href='?action=register' target='_self' style='color: #0ea5e9; font-weight: bold; text-decoration: none;'>Sign up!</a></p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='text-align: center; color: #666; font-size: 14px;'>Don't have an account? <a href='{role_qs}action=register' target='_self' style='color: #0ea5e9; font-weight: bold; text-decoration: none;'>Sign up!</a></p>", unsafe_allow_html=True)
     else:
         st.markdown("<h2 style='text-align: center; color: #333333; font-family: sans-serif; margin-bottom: 20px; font-weight: 700;'>Create Account</h2>", unsafe_allow_html=True)
-        st.text_input("First Name", placeholder="Jane", key="fn_reg")
-        st.text_input("Last Name", placeholder="Doe", key="ln_reg")
-        st.text_input("Email", placeholder="name@company.com", key="email_reg")
-        st.text_input("Password", type="password", placeholder="••••••••", key="pass_reg")
+        with st.form("reg_form", border=False):
+            st.text_input("First Name", placeholder="Jane", key="fn_reg")
+            st.text_input("Last Name", placeholder="Doe", key="ln_reg")
+            st.text_input("Email", placeholder="name@company.com", key="email_reg")
+            st.text_input("Password", type="password", placeholder="••••••••", key="pass_reg")
+            st.markdown("<br>", unsafe_allow_html=True)
+            submitted = st.form_submit_button("REGISTER", type="primary", use_container_width=True)
+            if submitted:
+                email = st.session_state.get('email_reg', 'user@example.com')
+                fn = st.session_state.get('fn_reg', 'Jane')
+                ln = st.session_state.get('ln_reg', 'Doe')
+                full = f"{fn} {ln}".strip()
+                st.session_state['logged_in_user'] = full if full else "Jane Doe"
+                st.session_state['user_email'] = email
+                st.session_state['auth_success'] = True
+                st.session_state['just_authenticated'] = True
+                if 'action' in st.query_params:
+                    del st.query_params['action']
+                st.rerun()
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("REGISTER", type="primary", use_container_width=True):
-            fn = st.session_state.get('fn_reg', 'Jane')
-            ln = st.session_state.get('ln_reg', 'Doe')
-            full = f"{fn} {ln}".strip()
-            st.session_state['logged_in_user'] = full if full else "Jane Doe"
-            if 'action' in st.query_params:
-                del st.query_params['action']
-            st.success("Successfully registered! You can now select your dashboard role below.")
-            st.rerun()
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: #666; font-size: 14px;'>Already have an account? <a href='?action=login' target='_self' style='color: #0ea5e9; font-weight: bold; text-decoration: none;'>Sign in!</a></p>", unsafe_allow_html=True)
-
-if 'action' in st.query_params:
-    action = st.query_params['action']
-    auth_modal(mode="login" if action=="login" else "register")
+        st.markdown(f"<p style='text-align: center; color: #666; font-size: 14px;'>Already have an account? <a href='{role_qs}action=login' target='_self' style='color: #0ea5e9; font-weight: bold; text-decoration: none;'>Sign in!</a></p>", unsafe_allow_html=True)
 
 if 'role' in st.query_params:
     if st.query_params['role'] == 'user':
         st.session_state['user_type'] = 'Uber User'
     elif st.query_params['role'] in ['owner', 'analyst']:
         st.session_state['user_type'] = 'Uber Analyst'
+
+if 'action' in st.query_params and not st.session_state.get('auth_success', False):
+    if 'user_type' in st.session_state:
+        action = st.query_params['action']
+        auth_modal(mode="login" if action=="login" else "register")
+    else:
+        if 'action' in st.query_params:
+            del st.query_params['action']
+
+if st.session_state.get('auth_success', False):
+    if st.session_state.get('just_authenticated', False):
+        from utils import send_welcome_email
+        user_email = st.session_state.get('user_email', '')
+        user_name = st.session_state.get('logged_in_user', 'Jane Doe')
+        site_url = "https://uber-fare-explorer.streamlit.app" 
+        user_type = st.session_state.get('user_type', 'User')
+        send_welcome_email(user_email, user_name, site_url, user_type)
+        if user_email:
+            st.toast("Check your email box!", icon=" ")
+        st.session_state['just_authenticated'] = False
+        
+    # Reset it so it doesn't stay forever, but we need it to be False eventually.
+    # Wait, if we reset it, and query_params still has action, it will reopen.
+    # But since we did del st.query_params['action'] and reran, next rerun SHOULD NOT have it.
+    # So we can safely reset it here if we assume the browser updated the URL.
+    st.session_state['auth_success'] = False
 
 # Inject the global CSS and Top Navbar onto every page
 inject_custom_css()

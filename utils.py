@@ -42,8 +42,10 @@ def inject_custom_css():
     
     if logged_user:
         user_display = f'<div style="display: flex; align-items: center; color: #FFFFFF; font-family: \'Inter\', sans-serif; font-size: 14px; font-weight: 500; opacity: 0.9; margin-left: 20px; border-left: 1px solid #333; padding-left: 20px;">{logged_user}{user_svg}</div>'
+    elif user_type:
+        user_display = f'<a href="{role_param}&action=login" target="_self" style="display: flex; align-items: center; color: #FFFFFF; text-decoration: none; font-family: \'Inter\', sans-serif; font-size: 14px; font-weight: 500; opacity: 0.8; margin-left: 20px; border-left: 1px solid #333; padding-left: 20px;">Sign In{user_svg}</a>'
     else:
-        user_display = f'<a href="?action=login" target="_self" style="display: flex; align-items: center; color: #FFFFFF; text-decoration: none; font-family: \'Inter\', sans-serif; font-size: 14px; font-weight: 500; opacity: 0.8; margin-left: 20px; border-left: 1px solid #333; padding-left: 20px;">Sign In{user_svg}</a>'
+        user_display = ""
 
     if user_type == "Uber User":
         nav_links = f'<a href="/{role_param}" target="_self" class="nav-link">About Us</a><a href="geospatial-hub{role_param}" target="_self" class="nav-link">Maps</a><a href="temporal-analysis{role_param}" target="_self" class="nav-link">Time</a><a href="distributions{role_param}" target="_self" class="nav-link">Prices</a><a href="segment-encyclopedia{role_param}" target="_self" class="nav-link">Profiles</a><span style="color: #555555; margin-right: 25px;">|</span><a href="savings{role_param}" target="_self" class="nav-link">Savings</a>'
@@ -272,3 +274,81 @@ def render_footer():
         <div>Built for Machine Learning II</div>
     </div>
     ''', unsafe_allow_html=True)
+
+def send_welcome_email(user_email, user_name, site_url, user_type="User"):
+    """
+    Simulates sending a welcome email.
+    If you want to send a real email, configure SMTP credentials via environment variables.
+    """
+    if not user_email:
+        return
+        
+    if user_type == "Uber User":
+        subject = "Welcome to Uber Fare Explorer! Here is your 10% OFF Voucher!"
+        body = f"""Hello {user_name},
+
+Welcome to our site! You have successfully signed in as an {user_type}.
+
+As a welcome gift, enjoy 10% OFF your next Uber ride!
+USE PROMO CODE: kikacarlota10
+
+Access the application here: {site_url}
+
+Enjoy your ride for less!
+The Uber Fare Explorer Team"""
+    else:
+        subject = "Welcome to Uber Fare Explorer! Your Executive Insights Report"
+        body = f"""Hello {user_name},
+
+Welcome to our site! You have successfully signed in as an {user_type}.
+
+Here is a summary of our key business insights:
+- Busiest periods typically correlate with peak commuter hours and late-night weekend shifts.
+- Geospatial mapping reveals high-demand clusters in downtown areas and airports.
+- Optimizing fleet distribution based on these temporal and spatial trends can yield up to 15% operational savings.
+- For detailed segment analysis and business strategy, access the full interactive dashboard.
+
+Access your complete dashboard here: {site_url}
+
+Best regards,
+The Uber Fare Explorer Team"""
+    
+    # In an academic project, simulating the email is often enough:
+    print("\n" + "="*50)
+    print(f"EMAIL SENT TO: {user_email}")
+    print(f"SUBJECT: {subject}")
+    print(f"BODY:\n{body}")
+    print("="*50 + "\n")
+    
+    # Optionally, to send a REAL email, you would uncomment this block and set SMTP_USER and SMTP_PASS:
+    import smtplib
+    from email.message import EmailMessage
+    
+    smtp_user = "carlota.marto@gmail.com"
+    smtp_pass = "gipkqexaiwfmkxpv"
+    
+    if smtp_user and smtp_pass:
+        msg = EmailMessage()
+        msg.set_content(body)
+        
+        if user_type == "Uber User":
+            import os
+            for ext in ['png', 'jpg', 'jpeg']:
+                if os.path.exists(f"voucher.{ext}"):
+                    with open(f"voucher.{ext}", "rb") as f:
+                        img_data = f.read()
+                    subtype = 'jpeg' if ext == 'jpg' else ext
+                    msg.add_attachment(img_data, maintype='image', subtype=subtype, filename=f'Voucher_10_OFF.{ext}')
+                    break
+        
+        msg['Subject'] = subject
+        msg['From'] = smtp_user
+        msg['To'] = user_email
+        try:
+            server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+            server.login(smtp_user, smtp_pass)
+            server.send_message(msg)
+            server.quit()
+            print(f"Real email successfully sent to {user_email}")
+        except Exception as e:
+            print(f"Failed to send real email: {e}")

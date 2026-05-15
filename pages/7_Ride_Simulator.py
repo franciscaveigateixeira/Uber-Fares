@@ -116,7 +116,7 @@ destino = st.selectbox("Dropoff location", options=nyc_locations, index=4)
 
 if st.button("See prices"):
     if origem == destino:
-        st.error("Pickup and dropoff cannot be the same location.")
+        st.error("Pickup and dropoff cannot be the same location.", icon=" ")
     else:
         with st.spinner("Calculating fares..."):
             time.sleep(1) # Simulate network request
@@ -170,7 +170,7 @@ if st.button("See prices"):
             </div>
             """, unsafe_allow_html=True)
             
-            st.success("(Price successfully generated based on historical data.)")
+            st.success("(Price successfully generated based on historical data.)", icon=" ")
 
 
 render_footer()

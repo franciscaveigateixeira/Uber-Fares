@@ -36,7 +36,7 @@ if all(c in df.columns for c in corr_cols):
         st.markdown("Distance and Fare share a near 1-to-1 linear correlation (`~0.90`), confirming our distance-based pricing model.")
         st.markdown("Interestingly, `passenger_count` has an absolute zero mathematical impact (`0.01`) on the final fare pricing, confirming zero marginal cost for extra riders.")
 else:
-    st.info("Additional dimensions calculating...")
+    st.info("Additional dimensions calculating...", icon=" ")
 
 st.divider()
 
@@ -57,7 +57,7 @@ if os.path.exists(pca_file):
         st.markdown("By compressing 8 distinct variables down into a 2D mathematical space using Principal Component Analysis, we can visually prove the algorithm's accuracy.")
         st.markdown("The distinct visual groupings demonstrate how effectively the K-Means clusters separate fundamentally different rider profiles in n-dimensional space.")
 else:
-    st.info("PCA Data missing!")
+    st.info("PCA Data missing!", icon=" ")
 
 from utils import render_footer
 render_footer()
