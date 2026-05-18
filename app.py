@@ -267,17 +267,18 @@ p1 = st.Page("pages/1_Distributions.py", title="Distributions", url_path="distri
 p2 = st.Page("pages/2_Temporal_Analysis.py", title="Temporal Analysis", url_path="temporal-analysis")
 p3 = st.Page("pages/3_Segment_Encyclopedia.py", title="Segment Encyclopedia", url_path="segment-encyclopedia")
 p4 = st.Page("pages/4_Geospatial_Hub.py", title="Geospatial Hub", url_path="geospatial-hub")
-p5 = st.Page("pages/5_Advanced_Analysis.py", title="Advanced Analysis", url_path="advanced-analysis")
-p6 = st.Page("pages/6_Business_Strategy.py", title="Business Strategy", url_path="business-strategy")
-p7 = st.Page("pages/7_Ride_Simulator.py", title="Ride Simulator", url_path="ride-simulator")
-p8 = st.Page("pages/8_Savings.py", title="Savings", url_path="savings")
+p_backend = st.Page("pages/5_Backend.py", title="Backend", url_path="backend")
+p5 = st.Page("pages/6_Advanced_Analysis.py", title="Advanced Analysis", url_path="advanced-analysis")
+p6 = st.Page("pages/7_Business_Strategy.py", title="Business Strategy", url_path="business-strategy")
+p7 = st.Page("pages/8_Ride_Simulator.py", title="Ride Simulator", url_path="ride-simulator")
+p8 = st.Page("pages/9_Savings.py", title="Savings", url_path="savings")
 
 # Define pages based on user type
 user_type = st.session_state.get('user_type', 'Uber User')
 if user_type == "Uber User":
     pages = [p_home, p1, p2, p3, p4, p8, p7]
-else:  # Uber Owner
-    pages = [p_home, p1, p2, p3, p4, p5, p6, p7]
+else:  # Uber Owner / Analyst
+    pages = [p_home, p1, p2, p3, p4, p_backend, p5, p6, p7]
 
 # Run the router and completely hide the default sidebar menu
 pg = st.navigation(pages, position="hidden")
