@@ -281,5 +281,5 @@ else:  # Uber Owner
 
 # Run the router and completely hide the default sidebar menu
 pg = st.navigation(pages, position="hidden")
-inject_custom_css(pg.url_path)
+inject_custom_css()
 pg.run()
