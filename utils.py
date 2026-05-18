@@ -352,8 +352,30 @@ def render_footer():
         
     with f_col2:
         st.markdown("<h4 style='color: #A6A6A6; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px;'>Work Done By</h4>", unsafe_allow_html=True)
-        st.markdown("<a href='https://github.com/CarlotaMarto' target='_blank' style='color: #000000; text-decoration: none; font-weight: bold;'>Carlota Marto</a><br><span style='color: #666666; font-size: 13px;'>20241729</span>", unsafe_allow_html=True)
-        st.markdown("<br><a href='https://github.com/franciscaveigateixeira' target='_blank' style='color: #000000; text-decoration: none; font-weight: bold;'>Francisca Teixeira</a><br><span style='color: #666666; font-size: 13px;'>20241702</span>", unsafe_allow_html=True)
+        st.markdown("""
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: -5px;">
+            <!-- Carlota Marto -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <a href="https://github.com/CarlotaMarto" target="_blank" style="text-decoration: none; display: flex; align-items: center;">
+                    <img src="https://github.com/CarlotaMarto.png" style="width: 42px; height: 42px; border-radius: 50%; border: 2px solid #E5E7EB; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1.0)'" />
+                </a>
+                <div>
+                    <a href="https://github.com/CarlotaMarto" target="_blank" style="color: #000000; text-decoration: none; font-weight: 700; font-family: 'Inter', sans-serif; font-size: 14px; display: block; line-height: 1.2;">Carlota Marto</a>
+                    <span style="color: #666666; font-size: 12px; font-family: 'Inter', sans-serif;">20241729</span>
+                </div>
+            </div>
+            <!-- Francisca Teixeira -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <a href="https://github.com/franciscaveigateixeira" target="_blank" style="text-decoration: none; display: flex; align-items: center;">
+                    <img src="https://github.com/franciscaveigateixeira.png" style="width: 42px; height: 42px; border-radius: 50%; border: 2px solid #E5E7EB; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1.0)'" />
+                </a>
+                <div>
+                    <a href="https://github.com/franciscaveigateixeira" target="_blank" style="color: #000000; text-decoration: none; font-weight: 700; font-family: 'Inter', sans-serif; font-size: 14px; display: block; line-height: 1.2;">Francisca Teixeira</a>
+                    <span style="color: #666666; font-size: 12px; font-family: 'Inter', sans-serif;">20241702</span>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         
     with f_col3:
         st.markdown("<h4 style='color: #A6A6A6; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px;'>Teacher</h4>", unsafe_allow_html=True)
