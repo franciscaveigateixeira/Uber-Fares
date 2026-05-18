@@ -42,7 +42,11 @@ else:
 def render_map_inside(distance_km, simulated_hour, estimated_price, origem, destino):
     st.markdown(
         f"""
-        <p style='color: #333333; font-size: 15px; margin-bottom: 20px; font-family: sans-serif;'>
+        <p style='color: #333333; font-size: 15px; margin-bottom: 20px; font-family: sans-serif; line-height: 1.5;'>
+            <b>How was the fare calculated?</b><br>
+            The fare is computed using a <b>Base Fare (€3.50)</b> + a <b>Distance Fare (€1.85 per km)</b>, 
+            multiplied by a <b>Time-of-Day Surge multiplier</b> depending on the hour of the trip (e.g. morning/evening rush hours, or late-night adjustments).<br><br>
+            <b>Historical Reference Map</b><br>
             This interactive map displays up to 15 real reference trips from our historical database with matching distances 
             (<b>{distance_km - 2.5:.1f} km - {distance_km + 2.5:.1f} km</b>) and pick-up hours. 
             Hover over any path to see its original start time, pickup/dropoff landmarks, and price!
@@ -165,7 +169,7 @@ def render_map_inside(distance_km, simulated_hour, estimated_price, origem, dest
         height=500
     )
     
-    st.plotly_chart(fig, use_container_width=True, config={'scrollZoom': True})
+    st.plotly_chart(fig, use_container_width=True, config={'scrollZoom': True, 'modeBarButtonsToAdd': ['zoomInMapbox', 'zoomOutMapbox']})
     
     # Legend panel (NO emojis in system labels)
     st.markdown(
@@ -238,45 +242,59 @@ div.stButton > button:hover {
     border: none;
 }
 /* Fare Card */
-.fare-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 25px;
-    border: 1px solid #E2E2E2;
-    border-radius: 12px;
-    background-color: #FFFFFF;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-div:has(> .card-and-button-container) + div {
-    margin-top: -120px !important;
-    height: 100px !important;
+/* Fare Card & Overlay Button Styling */
+.overlay-button-container {
     position: relative !important;
-    z-index: 100 !important;
+    height: 102px !important;
+    margin-bottom: -102px !important;
+    z-index: 999 !important;
 }
-div:has(> .card-and-button-container) + div button {
+.overlay-button-container button {
     background-color: transparent !important;
     border: none !important;
     color: transparent !important;
-    height: 100px !important;
+    height: 102px !important;
     width: 100% !important;
     cursor: pointer !important;
     box-shadow: none !important;
     margin: 0 !important;
     padding: 0 !important;
 }
-div:has(> .card-and-button-container) + div button:hover {
+.overlay-button-container button:hover {
     background-color: transparent !important;
     border: none !important;
     color: transparent !important;
 }
-div:has(> .card-and-button-container) + div button:active {
+.overlay-button-container button:active {
     background-color: transparent !important;
     border: none !important;
     color: transparent !important;
 }
-div:has(> .card-and-button-container):has(+ div:hover) .fare-card {
+.card-container-wrapper {
+    position: relative;
+    width: 100%;
+    height: 102px;
+    margin-bottom: 25px;
+    pointer-events: none;
+}
+.fare-card {
+    border-left: 6px solid #06C167;
+    background-color: #FFFFFF;
+    border-top: 1px solid #E2E2E2;
+    border-right: 1px solid #E2E2E2;
+    border-bottom: 1px solid #E2E2E2;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 102px;
+    box-sizing: border-box;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+/* Trigger hover effect on the card when hovering the overlay button! */
+.overlay-button-container:hover + .card-container-wrapper .fare-card {
     transform: translateY(-2px) !important;
     box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
 }
@@ -374,31 +392,25 @@ if st.session_state.get('prices_calculated', False):
     st.markdown(f"**Estimated Trip:** {distance_km:.1f} km ≈ {duration_min} min drive")
     st.caption(surge_msg)
     
-    # Render Clickable Fare Card wrapped in a relative container
-    logo_b64 = get_base64_bin_help('uber_logo.jpg')
-    logo_img_tag = f'<img src="data:image/png;base64,{logo_b64}" style="height: 18px;"/>' if logo_b64 else 'UberX'
-    
-    st.markdown(f"""
-    <div class="card-and-button-container" style="position: relative; width: 100%; margin-bottom: 20px;">
-        <div class="fare-card" style="border-left: 6px solid #06C167; box-sizing: border-box; background-color: #FFFFFF; border-top: 1px solid #E2E2E2; border-right: 1px solid #E2E2E2; border-bottom: 1px solid #E2E2E2; border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s; display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <div class="car-image">{logo_img_tag}</div>
-                <div>
-                    <div style="font-weight: 700; font-size: 20px; color: #000000;">Estimated Fare</div>
-                    <div style="color: #666666; font-size: 14px;">Based on historical model data • click to view on map</div>
-                </div>
-            </div>
-            <div style="font-weight: 700; font-size: 32px; color: #06C167;">€{estimated_price:.2f}</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Transparent Overlay Button immediately following the card container
+    # 1. Render the invisible overlay button first with class 'overlay-button-container'
+    st.markdown('<div class="overlay-button-container">', unsafe_allow_html=True)
     if st.button("Open Map Overlay", key="open_map_overlay_btn", use_container_width=True):
         simulated_hour = st.session_state.get('sim_hour', simulated_hour)
         show_map_dialog(distance_km, simulated_hour, estimated_price, origem, destino)
+    st.markdown('</div>', unsafe_allow_html=True)
     
-    st.success("(Price successfully generated based on historical data.)")
+    # 2. Render the physical card matching the exact same container coordinates
+    st.markdown(f"""
+    <div class="card-container-wrapper">
+        <div class="fare-card">
+            <div>
+                <div style="font-weight: 700; font-size: 20px; color: #000000; font-family: sans-serif;">Estimated Fare</div>
+                <div style="color: #666666; font-size: 14px; font-family: sans-serif;">Based on historical model data • click to view on map</div>
+            </div>
+            <div style="font-weight: 700; font-size: 32px; color: #06C167; font-family: sans-serif;">€{estimated_price:.2f}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 render_footer()
 

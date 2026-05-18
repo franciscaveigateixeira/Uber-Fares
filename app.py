@@ -9,6 +9,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+# Restore session from query parameters to persist across refreshes / tabs / devices!
+if 'logged_in_user' in st.query_params:
+    st.session_state['logged_in_user'] = st.query_params['logged_in_user']
+if 'user_email' in st.query_params:
+    st.session_state['user_email'] = st.query_params['user_email']
+if 'user_type' in st.query_params:
+    st.session_state['user_type'] = st.query_params['user_type']
+
 @st.dialog("User Authentication")
 def auth_modal(mode="login"):
     role = st.query_params.get('role', '')
@@ -31,6 +39,13 @@ def auth_modal(mode="login"):
                 st.session_state['user_email'] = email
                 st.session_state['auth_success'] = True
                 st.session_state['just_authenticated'] = True
+                st.session_state['just_registered'] = False
+                
+                # Write to query parameters to persist
+                st.query_params['logged_in_user'] = st.session_state['logged_in_user']
+                st.query_params['user_email'] = st.session_state['user_email']
+                st.query_params['user_type'] = st.session_state.get('user_type', 'Uber User')
+                
                 if 'action' in st.query_params:
                     del st.query_params['action']
                 st.rerun()
@@ -55,6 +70,13 @@ def auth_modal(mode="login"):
                 st.session_state['user_email'] = email
                 st.session_state['auth_success'] = True
                 st.session_state['just_authenticated'] = True
+                st.session_state['just_registered'] = True
+                
+                # Write to query parameters to persist
+                st.query_params['logged_in_user'] = st.session_state['logged_in_user']
+                st.query_params['user_email'] = st.session_state['user_email']
+                st.query_params['user_type'] = st.session_state.get('user_type', 'Uber User')
+                
                 if 'action' in st.query_params:
                     del st.query_params['action']
                 st.rerun()
@@ -152,10 +174,14 @@ if st.session_state.get('auth_success', False):
         user_name = st.session_state.get('logged_in_user', 'Jane Doe')
         site_url = "https://uberfares2-bwwu3ppswfnzujfisnbeoc.streamlit.app/" 
         user_type = st.session_state.get('user_type', 'User')
-        send_welcome_email(user_email, user_name, site_url, user_type)
+        
+        is_reg = st.session_state.get('just_registered', False)
+        
+        send_welcome_email(user_email, user_name, site_url, user_type, is_registration=is_reg)
         if user_email:
             st.toast("Check your email box!")
         st.session_state['just_authenticated'] = False
+        st.session_state['just_registered'] = False
         
     # Reset it so it doesn't stay forever, but we need it to be False eventually.
     # Wait, if we reset it, and query_params still has action, it will reopen.

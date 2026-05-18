@@ -17,6 +17,29 @@ Exclusive analytical insights designed specifically for Uber passengers to avoid
 </div>
 """, unsafe_allow_html=True)
 
+# Check if the user just registered as an Uber User to unlock their premium first-time discount!
+if st.session_state.get('just_registered', False) and st.session_state.get('user_type', '') == 'Uber User':
+    import base64
+    import os
+    voucher_b64 = ""
+    for ext in ['jpg', 'png', 'jpeg']:
+        if os.path.exists(f"voucher.{ext}"):
+            with open(f"voucher.{ext}", "rb") as img_file:
+                voucher_b64 = base64.b64encode(img_file.read()).decode()
+            break
+            
+    st.balloons() # Celebrating their welcome gift!
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, #06C167, #048648); color: #ffffff; border-radius: 16px; padding: 35px; box-shadow: 0 10px 30px rgba(6,193,103,0.15); margin-bottom: 40px; text-align: center; font-family: sans-serif;">
+        <h2 style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px; color:#ffffff;">🎉 Exclusive Welcome Gift Unlocked!</h2>
+        <p style="font-size:18px; opacity:0.95; margin-bottom:25px; color:#ffffff;">Since this is your first time registering as a passenger, you have received a <b>10% OFF Voucher</b>! Check your email inbox or use the promo code below:</p>
+        <div style="display:inline-block; background:#ffffff; color:#000000; font-size:24px; font-weight:800; padding:12px 30px; border-radius:8px; letter-spacing:2px; margin-bottom:25px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-transform:uppercase;">
+            kikacarlota10
+        </div>
+        {"<div style='margin: 0 auto; max-width: 450px; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.25);'><img src='data:image/jpeg;base64," + voucher_b64 + "' style='width: 100%; display: block;' /></div>" if voucher_b64 else ""}
+    </div>
+    """, unsafe_allow_html=True)
+
 # 3 Beautiful Glassmorphism Cards for the Savings Hacks
 st.markdown("""
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; padding: 10px; margin-bottom: 60px;">

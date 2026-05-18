@@ -291,6 +291,26 @@ def inject_custom_css(active_page=None):
             background-color: rgba(255,255,255,0.5);
             border-radius: 1px;
         }}
+        
+        /* Custom styling for all st.expander to have a gorgeous, opaque beige background */
+        div[data-testid="stExpander"] {{
+            background-color: #FAF5EF !important;
+            border: 1px solid #DCD7CD !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+        }}
+        div[data-testid="stExpander"] details {{
+            background-color: #FAF5EF !important;
+            border-radius: 12px !important;
+        }}
+        div[data-testid="stExpander"] details summary {{
+            background-color: #FAF5EF !important;
+            border-radius: 12px 12px 0 0 !important;
+        }}
+        div[data-testid="stExpander"] [data-testid="stExpanderDetails"] {{
+            background-color: #FAF5EF !important;
+            border-radius: 0 0 12px 12px !important;
+        }}
         </style>
         """, unsafe_allow_html=True)
     logo_b64 = get_base64_bin_help("uber_logo.jpg")
@@ -332,15 +352,14 @@ def render_footer():
         
     with f_col2:
         st.markdown("<h4 style='color: #A6A6A6; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px;'>Work Done By</h4>", unsafe_allow_html=True)
-        st.markdown("**Carlota Marto**<br>20241729", unsafe_allow_html=True)
-        st.markdown("**Francisca Teixeira**<br>20241702", unsafe_allow_html=True)
+        st.markdown("<a href='https://github.com/CarlotaMarto' target='_blank' style='color: #000000; text-decoration: none; font-weight: bold;'>Carlota Marto</a><br><span style='color: #666666; font-size: 13px;'>20241729</span>", unsafe_allow_html=True)
+        st.markdown("<br><a href='https://github.com/franciscaveigateixeira' target='_blank' style='color: #000000; text-decoration: none; font-weight: bold;'>Francisca Teixeira</a><br><span style='color: #666666; font-size: 13px;'>20241702</span>", unsafe_allow_html=True)
         
     with f_col3:
         st.markdown("<h4 style='color: #A6A6A6; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px;'>Teacher</h4>", unsafe_allow_html=True)
         st.markdown("**Ivo Bernardo**<br>Machine Learning II", unsafe_allow_html=True)
         
     with f_col4:
-        st.image("uber_logo.jpg", width=120)
         st.caption("This project is optimized for executive-level business intelligence and strategic decision making.")
         
     st.markdown("<br>", unsafe_allow_html=True)
@@ -351,7 +370,7 @@ def render_footer():
     </div>
     ''', unsafe_allow_html=True)
 
-def send_welcome_email(user_email, user_name, site_url, user_type="User"):
+def send_welcome_email(user_email, user_name, site_url, user_type="User", is_registration=False):
     """
     Simulates sending a welcome email.
     If you want to send a real email, configure SMTP credentials via environment variables.
@@ -359,11 +378,12 @@ def send_welcome_email(user_email, user_name, site_url, user_type="User"):
     if not user_email:
         return
         
-    if user_type == "Uber User":
-        subject = "Welcome to Uber Fare Explorer! Here is your 10% OFF Voucher!"
-        body = f"""Hello {user_name},
+    if is_registration:
+        if user_type == "Uber User":
+            subject = "Welcome to Uber Fare Explorer! Here is your 10% OFF Voucher!"
+            body = f"""Hello {user_name},
 
-Welcome to our site! You have successfully signed in as an {user_type}.
+Welcome to our site! You have successfully signed up as an {user_type}.
 
 As a welcome gift, enjoy 10% OFF your next Uber ride!
 USE PROMO CODE: kikacarlota10
@@ -372,11 +392,11 @@ Access the application here: {site_url}
 
 Enjoy your ride for less!
 The Uber Fare Explorer Team"""
-    else:
-        subject = "Welcome to Uber Fare Explorer! Your Executive Insights Report"
-        body = f"""Hello {user_name},
+        else:
+            subject = "Welcome to Uber Fare Explorer! Your Executive Insights Report"
+            body = f"""Hello {user_name},
 
-Welcome to our site! You have successfully signed in as an {user_type}.
+Welcome to our site! You have successfully signed up as an {user_type}.
 
 Here is a summary of our key business insights:
 - Busiest periods typically correlate with peak commuter hours and late-night weekend shifts.
@@ -388,6 +408,19 @@ Access your complete dashboard here: {site_url}
 
 Best regards,
 The Uber Fare Explorer Team"""
+    else:
+        # Standard welcome back email for returning logins (no voucher, no PDF detailed report!)
+        subject = "Welcome back to Uber Fare Explorer!"
+        body = f"""Hello {user_name},
+
+Welcome back to our site! You have successfully logged in to your account as an {user_type}.
+
+We are glad to have you back! Continue exploring dynamic fare trends and interactive analytical tools inside your dashboard.
+
+Access the application here: {site_url}
+
+Best regards,
+The Uber Fare Explorer Team"""
     
     # In an academic project, simulating the email is often enough:
     print("\n" + "="*50)
@@ -396,7 +429,7 @@ The Uber Fare Explorer Team"""
     print(f"BODY:\n{body}")
     print("="*50 + "\n")
     
-    # Optionally, to send a REAL email, you would uncomment this block and set SMTP_USER and SMTP_PASS:
+    # Optionally, to send a REAL email, you would configure credentials:
     import smtplib
     from email.message import EmailMessage
     
@@ -407,26 +440,28 @@ The Uber Fare Explorer Team"""
         msg = EmailMessage()
         msg.set_content(body)
         
-        if user_type == "Uber User":
-            import os
-            for ext in ['png', 'jpg', 'jpeg']:
-                if os.path.exists(f"voucher.{ext}"):
-                    with open(f"voucher.{ext}", "rb") as f:
-                        img_data = f.read()
-                    subtype = 'jpeg' if ext == 'jpg' else ext
-                    msg.add_attachment(img_data, maintype='image', subtype=subtype, filename=f'Voucher_10_OFF.{ext}')
-                    break
-        elif user_type == "Uber Analyst":
-            import os
-            try:
-                from report_generator import create_executive_pdf_report
-                pdf_path = create_executive_pdf_report(user_name)
-                if pdf_path and os.path.exists(pdf_path):
-                    with open(pdf_path, "rb") as f:
-                        pdf_data = f.read()
-                    msg.add_attachment(pdf_data, maintype='application', subtype='pdf', filename='Analyst_Executive_Report.pdf')
-            except Exception as e:
-                print(f"Could not generate/attach PDF: {e}")
+        # Attach files ONLY for first-time registrations
+        if is_registration:
+            if user_type == "Uber User":
+                import os
+                for ext in ['png', 'jpg', 'jpeg']:
+                    if os.path.exists(f"voucher.{ext}"):
+                        with open(f"voucher.{ext}", "rb") as f:
+                            img_data = f.read()
+                        subtype = 'jpeg' if ext == 'jpg' else ext
+                        msg.add_attachment(img_data, maintype='image', subtype=subtype, filename=f'Voucher_10_OFF.{ext}')
+                        break
+            elif user_type == "Uber Analyst":
+                import os
+                try:
+                    from report_generator import create_executive_pdf_report
+                    pdf_path = create_executive_pdf_report(user_name)
+                    if pdf_path and os.path.exists(pdf_path):
+                        with open(pdf_path, "rb") as f:
+                            pdf_data = f.read()
+                        msg.add_attachment(pdf_data, maintype='application', subtype='pdf', filename='Analyst_Executive_Report.pdf')
+                except Exception as e:
+                    print(f"Could not generate/attach PDF: {e}")
         
         msg['Subject'] = subject
         msg['From'] = smtp_user
