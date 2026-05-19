@@ -56,7 +56,7 @@ except Exception as e:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ─── Load data + compute ───────────────────────────────────────────────────────
-@st.cache_data(show_spinner="⚙️  Running ML pipeline on the dataset…")
+@st.cache_data(show_spinner="Running ML pipeline on the dataset...")
 def build_ml_artifacts(sample_n: int = 30_000):
     df = load_data()
     FEATURES = ["distance_km", "pickup_hour", "fare_per_km", "passenger_count"]

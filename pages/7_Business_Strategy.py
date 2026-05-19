@@ -66,31 +66,43 @@ if 'cluster' in df.columns:
 
     st.markdown("<br><br>", unsafe_allow_html=True)
 
-    # STRATEGY 3: Distance vs Volume by Segment
-    st.markdown("### 3. The Volume vs. Distance Matrix")
-    col_c1, col_c2 = st.columns([1, 1.5])
-    with col_c1:
-        st.markdown("""
-        <div style="background-color: #F6F6F6; border-top: 6px solid #333333; padding: 25px; border-radius: 8px; height: 100%;">
-            <h4 style="color: #000000; margin-top: 0;">Metric: Cluster Economics</h4>
-            <p style="color: #333333; font-size: 16px;"><b>Analysis:</b> This scatter plot isolates our ML clusters to compare their raw volume (X-axis) against their average distance (Y-axis), visualizing the dichotomy of the business model.</p>
-            <div style="background-color: #E2E2E2; height: 2px; width: 100%; margin: 15px 0;"></div>
-            <strong style="color: #000000; text-transform: uppercase;">Actionable Strategy</strong>
-            <p style="color: #333333; font-size: 16px; margin-top: 10px;">Allocate marketing budget inversely to distance: Focus 80% of retention budget on the massive <b>short-distance urban clusters</b> (high frequency, high volume), and treat long-distance airport clusters purely as premium, un-discounted cash cows.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    with col_c2:
-        cluster_econ = df.groupby('cluster').agg({'distance_km': 'mean', 'fare_amount': 'count'}).reset_index()
-        cluster_econ.columns = ['Cluster', 'Avg Distance (km)', 'Total Trips']
-        # Shorten cluster names for chart
-        cluster_econ['Cluster Name'] = cluster_econ['Cluster'].apply(lambda x: x.split(':')[1].strip() if ':' in x else x)
-        
-        fig3 = px.scatter(cluster_econ, x='Total Trips', y='Avg Distance (km)', color='Cluster Name', size='Total Trips', text='Cluster Name', title="Economic Matrix: Volume vs Distance")
-        fig3.update_traces(textposition='top center', marker=dict(line=dict(width=1, color='DarkSlateGrey')))
-        fig3.update_layout(height=400, margin=dict(l=0, r=0, t=40, b=0), showlegend=False)
-        # Ensure text is not clipped
-        fig3.update_yaxes(range=[0, cluster_econ['Avg Distance (km)'].max() * 1.3])
-        st.plotly_chart(fig3, use_container_width=True)
+    st.markdown("""
+    <div style="background-color: #F6F6F6; border-top: 6px solid #333333; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+        <h4 style="color: #000000; margin-top: 0;">Metric: Cluster Economics</h4>
+        <p style="color: #333333; font-size: 16px;"><b>Analysis:</b> This scatter plot isolates our ML clusters to compare their raw volume (X-axis) against their average distance (Y-axis), visualizing the dichotomy of the business model.</p>
+        <div style="background-color: #E2E2E2; height: 2px; width: 100%; margin: 15px 0;"></div>
+        <strong style="color: #000000; text-transform: uppercase;">Actionable Strategy:</strong>
+        <span style="color: #333333; font-size: 16px;">Allocate marketing budget inversely to distance: Focus 80% of retention budget on the massive <b>short-distance urban clusters</b> (high frequency, high volume), and treat long-distance airport clusters purely as premium, un-discounted cash cows.</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    cluster_econ = df.groupby('cluster').agg({'distance_km': 'mean', 'fare_amount': 'count'}).reset_index()
+    cluster_econ.columns = ['Cluster', 'Avg Distance (km)', 'Total Trips']
+    # Shorten cluster names for chart
+    cluster_econ['Cluster Name'] = cluster_econ['Cluster'].apply(lambda x: x.split(':')[1].strip() if ':' in x else x)
+    
+    fig3 = px.scatter(cluster_econ, x='Total Trips', y='Avg Distance (km)', color='Cluster Name', size='Total Trips', text='Cluster Name', title="Economic Matrix: Volume vs Distance")
+    
+    # Position each label carefully to prevent overlapping
+    text_positions = {
+        'Airport / Long-Distance': 'top center',
+        'Standard Weekday': 'top center',
+        'Weekend Rush-Hour': 'bottom left',
+        'Standard Weekend': 'bottom center',
+        'High Passenger / SUV': 'top left',
+        'Fare / GPS Anomalies': 'middle right',
+        'Weekday Rush-Hour': 'top center',
+        'Late-Night Party': 'top center'
+    }
+    for trace in fig3.data:
+        if trace.name in text_positions:
+            trace.textposition = text_positions[trace.name]
+            
+    fig3.update_traces(marker=dict(line=dict(width=1, color='DarkSlateGrey')))
+    fig3.update_layout(height=520, margin=dict(l=0, r=0, t=40, b=0), showlegend=False)
+    # Ensure text is not clipped and has plenty of bottom room for labels
+    fig3.update_yaxes(range=[-2, cluster_econ['Avg Distance (km)'].max() * 1.35])
+    st.plotly_chart(fig3, use_container_width=True)
 
 else:
     st.info("Cluster data is required to view these insights. Please ensure you are loading 'uber_with_clusters.csv'.")

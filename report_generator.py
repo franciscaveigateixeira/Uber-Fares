@@ -162,10 +162,10 @@ def create_executive_pdf_report(user_name: str) -> str | None:
 
         # Thin vertical separator between "Uber" and title
         pdf.set_draw_color(*TILE_BORDER)
-        pdf.line(52, 11, 52, 27)
+        pdf.line(58, 11, 58, 27)
 
         # "EXECUTIVE INSIGHTS REPORT" inline to the right of Uber
-        pdf.set_xy(56, 10)
+        pdf.set_xy(62, 10)
         pdf.set_font("Helvetica", "B", 14)
         pdf.set_text_color(*TEXT_DARK)
         pdf.cell(0, 10, "EXECUTIVE INSIGHTS REPORT")
@@ -174,10 +174,10 @@ def create_executive_pdf_report(user_name: str) -> str | None:
         pdf.set_xy(32, 20)
         pdf.set_font("Helvetica", "", 6.5)
         pdf.set_text_color(*UBER_GREEN)
-        pdf.cell(20, 5, "FARE EXPLORER")
+        pdf.cell(24, 5, "FARE EXPLORER")
 
         # Dataset subtitle under the title
-        pdf.set_xy(56, 20)
+        pdf.set_xy(62, 20)
         pdf.set_font("Helvetica", "", 7.5)
         pdf.set_text_color(*TEXT_MUTED)
         pdf.cell(0, 5, "NYC UBER FARE ANALYSIS  |  191,822 TRIPS  |  2009 - 2015")
