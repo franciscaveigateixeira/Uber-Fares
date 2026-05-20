@@ -16,9 +16,9 @@ GREEN_MUTED = (6, 150, 80)
 # ── Static/Computed Metrics ──────────────────────────────────────────
 INSIGHTS = {
     "total_trips": 191822,
-    "avg_fare": 11.36,
+    "avg_fare": 11.31,
     "avg_distance_km": 3.4,
-    "peak_hour": 18,
+    "peak_hour": 19,
     "micro_trip_pct": 82.2
 }
 
