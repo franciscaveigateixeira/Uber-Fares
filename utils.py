@@ -467,17 +467,21 @@ The Uber Fare Explorer Team"""
         
         # Attach files ONLY for first-time registrations
         if is_registration:
+            import os
+            base_dir = os.path.dirname(os.path.abspath(__file__))
             if user_type == "Uber User":
-                import os
-                for ext in ['png', 'jpg', 'jpeg']:
-                    if os.path.exists(f"voucher.{ext}"):
-                        with open(f"voucher.{ext}", "rb") as f:
+                for ext in ['jpeg', 'jpg', 'png']:
+                    voucher_path = os.path.join(base_dir, f"voucher.{ext}")
+                    if os.path.exists(voucher_path):
+                        with open(voucher_path, "rb") as f:
                             img_data = f.read()
-                        subtype = 'jpeg' if ext == 'jpg' else ext
+                        subtype = 'jpeg' if ext in ['jpg', 'jpeg'] else ext
                         msg.add_attachment(img_data, maintype='image', subtype=subtype, filename=f'Voucher_10_OFF.{ext}')
+                        print(f"Voucher attached: {voucher_path}")
                         break
+                else:
+                    print(f"WARNING: No voucher file found in {base_dir}")
             elif user_type == "Uber Analyst":
-                import os
                 try:
                     from report_generator import create_executive_pdf_report
                     pdf_path = create_executive_pdf_report(user_name)
