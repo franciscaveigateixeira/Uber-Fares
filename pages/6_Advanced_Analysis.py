@@ -38,26 +38,7 @@ if all(c in df.columns for c in corr_cols):
 else:
     st.info("Additional dimensions calculating...")
 
-st.divider()
 
-st.markdown("### PCA Dimensionality Reduction")
-
-pca_file = "uber_with_clusters_pca.csv"
-if os.path.exists(pca_file):
-    col_pca, col_pca_text = st.columns([2, 1])
-    with col_pca:
-        pca_df = pd.read_csv(pca_file)
-        uber_palette = ["#06C167", "#000000", "#333333", "#666666", "#999999", "#CCCCCC", "#1f7a46", "#048043"]
-        fig_pca = px.scatter(pca_df, x="pca_x", y="pca_y", color=pca_df['cluster'].astype(str), color_discrete_sequence=uber_palette, opacity=0.5)
-        fig_pca.update_layout(margin=dict(l=0, r=0, t=30, b=0))
-        st.plotly_chart(fig_pca, use_container_width=True, config={'scrollZoom': True})
-    with col_pca_text:
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("**Insight: Mathematical Separation**")
-        st.markdown("By compressing 8 distinct variables down into a 2D mathematical space using Principal Component Analysis, we can visually prove the algorithm's accuracy.")
-        st.markdown("The distinct visual groupings demonstrate how effectively the K-Means clusters separate fundamentally different rider profiles in n-dimensional space.")
-else:
-    st.info("PCA Data missing!")
 
 from utils import render_footer
 render_footer()

@@ -12,7 +12,7 @@ kpi1, kpi2, kpi3 = st.columns(3)
 with kpi1:
     st.metric(label="Total Trips Analyzed", value=f"{len(df):,}")
 with kpi2:
-    st.metric(label="Median Fare", value=f"€{df['fare_amount'].median():.2f}")
+    st.metric(label="Average Fare", value=f"{df['fare_amount'].mean():.2f}€")
 with kpi3:
     solo_riders = len(df[df['passenger_count'] == 1])
     solo_pct = (solo_riders / len(df)) * 100

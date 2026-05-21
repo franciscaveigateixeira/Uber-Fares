@@ -31,7 +31,7 @@ if st.session_state.get('just_registered', False) and st.session_state.get('user
     st.balloons() # Celebrating their welcome gift!
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, #06C167, #048648); color: #ffffff; border-radius: 16px; padding: 35px; box-shadow: 0 10px 30px rgba(6,193,103,0.15); margin-bottom: 40px; text-align: center; font-family: sans-serif;">
-        <h2 style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px; color:#ffffff;">🎉 Exclusive Welcome Gift Unlocked!</h2>
+        <h2 style="margin-top:0; font-size:32px; font-weight:800; letter-spacing:-1px; color:#ffffff;">Exclusive Welcome Gift Unlocked!</h2>
         <p style="font-size:18px; opacity:0.95; margin-bottom:25px; color:#ffffff;">Since this is your first time registering as a passenger, you have received a <b>10% OFF Voucher</b>! Check your email inbox or use the promo code below:</p>
         <div style="display:inline-block; background:#ffffff; color:#000000; font-size:24px; font-weight:800; padding:12px 30px; border-radius:8px; letter-spacing:2px; margin-bottom:25px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-transform:uppercase;">
             kikacarlota10
